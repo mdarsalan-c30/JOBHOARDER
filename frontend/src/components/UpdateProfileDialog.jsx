@@ -18,12 +18,12 @@ import { toast } from "sonner"
 export function UpdateProfileDialog({ open, setOpen }) {
     const { authUser, loading } = useSelector(store => store.auth);
     const [input, setInput] = useState({
-        fullname: authUser?.fullname,
-        email: authUser?.email,
-        phoneNumber: authUser?.phoneNumber,
-        bio: authUser?.profile?.bio,
-        skills: authUser?.profile?.skills?.map(skill => skill),
-        file: authUser?.profile?.resume,
+        fullname: authUser?.fullname || "",
+        email: authUser?.email || "",
+        phoneNumber: authUser?.phoneNumber || "",
+        bio: authUser?.profile?.bio || "",
+        skills: authUser?.profile?.skills || [],
+        file: null, // Default to null if no file is present
     });
     const dispatch = useDispatch();
 
@@ -43,7 +43,7 @@ export function UpdateProfileDialog({ open, setOpen }) {
         formData.append('email', input.email);
         formData.append('phoneNumber', input.phoneNumber);
         formData.append('bio', input.bio);
-        formData.append('skills', input.skills);
+        formData.append('skills', JSON.stringify(input.skills)); // Assuming skills is an array
         if (input.file) {
             formData.append('file', input.file);
         }
@@ -62,6 +62,7 @@ export function UpdateProfileDialog({ open, setOpen }) {
             }
         } catch (error) {
             console.log(error);
+            toast.error("Failed to update profile. Please try again.");
         } finally {
             dispatch(setLoading(false));
         }
@@ -102,7 +103,7 @@ export function UpdateProfileDialog({ open, setOpen }) {
                         </div>
                         <div className="grid grid-cols-4 items-center gap-4">
                             <Label htmlFor="number" className="text-right">
-                                Number
+                                Phone Number
                             </Label>
                             <Input
                                 id="number"
@@ -130,9 +131,9 @@ export function UpdateProfileDialog({ open, setOpen }) {
                             </Label>
                             <Input
                                 id="skills"
-                                value={input.skills}
+                                value={input.skills.join(', ')} // Display skills as comma-separated
                                 name="skills"
-                                onChange={changeHandler}
+                                onChange={(e) => setInput({ ...input, skills: e.target.value.split(', ') })}
                                 className="col-span-3"
                             />
                         </div>
@@ -149,7 +150,6 @@ export function UpdateProfileDialog({ open, setOpen }) {
                                 className="col-span-3"
                             />
                         </div>
-
                     </div>
                     <DialogFooter>
                         {
