@@ -25,6 +25,7 @@ const Navbar = () => {
                                     <li className='hover:text-[#6A38C2] cursor-pointer'><Link to={"/"}>Home</Link></li>
                                     <li className='hover:text-[#6A38C2] cursor-pointer'><Link to={"/jobs"}>Jobs</Link></li>
                                     <li className='hover:text-[#6A38C2] cursor-pointer'><Link to={"/browse"}>Browse</Link></li>
+                                    <li className='hover:text-[#6A38C2] cursor-pointer'><Link to={"/Tools"}>AI Resume</Link></li>
                                 </>
                             )
                         }
