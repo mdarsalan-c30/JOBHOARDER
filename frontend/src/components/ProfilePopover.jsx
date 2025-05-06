@@ -16,10 +16,11 @@ export function ProfilePopover() {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const { authUser } = useSelector(store => store.auth);
+
     const logoutHandler = async () => {
         try {
             const res = await axios.get("https://jobhoarder.onrender.com/api/v1/user/logout", { withCredentials: true });
-            
+
             if (res.data.success) {
                 dispatch(setAuthUser(null));
                 navigate("/");
@@ -27,44 +28,38 @@ export function ProfilePopover() {
             }
         } catch (error) {
             console.log(error);
-            toast.error(error.response.data.message);
+            toast.error(error.response?.data?.message || "An error occurred");
         }
     }
+
     return (
         <Popover>
             <PopoverTrigger asChild>
                 <Avatar className="cursor-pointer">
-                    <AvatarImage src={authUser?.profile?.profilePhoto} alt="@shadcn" />
+                    <AvatarImage src={authUser?.profile?.profilePhoto} alt={authUser?.fullname || "@shadcn"} />
                 </Avatar>
             </PopoverTrigger>
             <PopoverContent className="w-80">
                 <div className="grid gap-4">
-                    <div className=" flex  gap-2 space-y-2">
+                    <div className=" flex gap-2 space-y-2">
                         <Avatar className="cursor-pointer">
                             <AvatarImage src={authUser?.profile?.profilePhoto} alt="@shadcn" />
                         </Avatar>
                         <div>
                             <h4 className="font-medium leading-none">{authUser?.fullname}</h4>
-                            {
-                                (authUser && authUser?.role === 'student') && (
-                                    <p className="text-sm text-muted-foreground">
-                                       {authUser?.profile.bio}
-                                    </p>
-                                )
-                            }
+                            {authUser?.role === 'student' && (
+                                <p className="text-sm text-muted-foreground">{authUser?.profile?.bio}</p>
+                            )}
                         </div>
                     </div>
                     <div className="flex flex-col gap-3 text-gray-600">
-                        {
-                            (authUser && authUser?.role === 'student') && (
-                                <Link to="/profile" className="flex w-fit items-center gap-2 cursor-pointer">
-                                    <User2 />
-                                    <p>View Profile</p>
-                                </Link>
-                            )
-                        }
-
-                        <div onClick={logoutHandler} className=" flex w-fit items-center gap-2 cursor-pointer">
+                        {authUser?.role === 'student' && (
+                            <Link to="/profile" className="flex w-fit items-center gap-2 cursor-pointer">
+                                <User2 />
+                                <p>View Profile</p>
+                            </Link>
+                        )}
+                        <div onClick={logoutHandler} className="flex w-fit items-center gap-2 cursor-pointer">
                             <LogOut />
                             <p>Logout</p>
                         </div>
